@@ -2,112 +2,249 @@
 //http://www.libsdl.org/index.php
 //http://www.gtk.org/
 
-const int SCREEN_WIDTH  = 640;
-const int SCREEN_HEIGHT = 480;
+#include <stdlib.h>
 
-/**
-* Log an SDL error with some error message to the output stream of our choice
-* @param os The output stream to write the message to
-* @param msg The error message to write, format will be msg error: SDL_GetError()
-*/
-void logSDLError(std::ostream &os, const std::string &msg){
-	os << msg << " error: " << SDL_GetError() << std::endl;
+#include <stdio.h>
+
+#include <SDL/SDL.h>
+
+
+int main(int argc, char *argv[])
+
+{
+
+    /*
+
+    1. Déclaration des variables
+
+    */
+
+    SDL_Surface *ecran = NULL, *zozor = NULL;
+
+    SDL_Surface *clotureVerticale = NULL, *clotureHorizontale = NULL;
+
+    SDL_Event event;
+
+    SDL_Rect positionZozor;
+
+    SDL_Rect positionClotureGH, positionClotureD, positionClotureB;
+
+    int continuer = 1;
+
+
+
+    /*
+
+    2. On s'occupe de la fenêtre
+
+    */
+
+    SDL_Init(SDL_INIT_VIDEO);
+
+
+    ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+
+    SDL_WM_SetCaption("Pauvre Zozor.", NULL);
+
+    //On colore le fond en vert (imitation herbe... :lol: )
+
+    SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 10,255,10));
+
+
+
+    /*
+
+    3. Les clôtures
+
+    */
+
+    // On détermine les dimensions des clôtures verticales et horizontales
+
+    clotureVerticale = SDL_CreateRGBSurface(SDL_HWSURFACE, 10, ecran->h - 2*40, 32, 0, 0, 0, 0);
+
+    clotureHorizontale = SDL_CreateRGBSurface(SDL_HWSURFACE, ecran->w - 2*40, 10, 32, 0, 0, 0, 0);
+
+
+    // On détermine la position des 4 clôtures
+
+    // Celle de gauche et celle du haut (elles ont la même origine)
+
+    positionClotureGH.x = 40;
+
+    positionClotureGH.y = 40;
+
+    // Celle de droite
+
+    positionClotureD.x = ecran->w - 50;
+
+    positionClotureD.y = 40;
+
+    // Celle du bas
+
+    positionClotureB.x = 40;
+
+    positionClotureB.y = ecran->h -50;
+
+
+    // On blitte les 4 clôtures aux bons endroits
+
+    //Celle de gauche
+
+    SDL_BlitSurface(clotureVerticale, NULL, ecran, &positionClotureGH);
+
+    //Celle de droite
+
+    SDL_BlitSurface(clotureVerticale, NULL, ecran, &positionClotureD);
+
+    //Celle du haut
+
+    SDL_BlitSurface(clotureHorizontale, NULL, ecran, &positionClotureGH);
+
+    //Celle du bas
+
+    SDL_BlitSurface(clotureHorizontale, NULL, ecran, &positionClotureB);
+
+
+
+    /*
+
+    4. Placement initial de Zozor
+
+    */
+
+    //On charge l'image de Zozor dans la surface et on rend le fond transparent
+
+    zozor = SDL_LoadBMP("zozor.bmp");
+
+    SDL_SetColorKey(zozor, SDL_SRCCOLORKEY, SDL_MapRGB(zozor->format, 0, 0, 255));
+
+
+    // On rend le curseur invisible et on le centre (Zozor devient le curseur)
+
+    SDL_ShowCursor(SDL_DISABLE);
+
+    SDL_WarpMouse((ecran->w / 2 - zozor->w / 2), (ecran->h / 2 - zozor->h / 2));
+
+
+
+    /*
+
+    5. La boucle principale
+
+    */
+
+    while(continuer)
+
+    {
+
+
+        SDL_WaitEvent(&event);
+
+
+        switch(event.type)
+
+        {
+
+            case SDL_QUIT:
+
+                continuer = 0;
+
+                break;
+
+
+            // En appuyant sur une touche, on quitte le programme
+
+            case SDL_KEYDOWN:
+
+                continuer = 0;
+
+                break;
+
+
+            // On limite les déplacements de Zozor à son enclos (mouahaha)
+
+            case SDL_MOUSEMOTION:
+
+            // Empêcher le dépassement vers la droite
+
+                if(event.motion.x > ecran->w - zozor->w - 50)
+
+                    SDL_WarpMouse(ecran->w - zozor->w - 50, event.motion.y);
+
+
+            // Empêcher le dépassement vers la gauche
+
+                if(event.motion.x < 50)
+
+                    SDL_WarpMouse(50, event.motion.y);
+
+
+            // Empêcher le dépassement vers le haut
+
+                if(event.motion.y < 50)
+
+                    SDL_WarpMouse(event.motion.x, 50);
+
+
+            // Empêcher le dépassement vers le bas
+
+                if(event.motion.y > ecran->h - zozor->h - 50)
+
+                    SDL_WarpMouse(event.motion.x, ecran->h - zozor->h - 50);
+
+
+                positionZozor.x = event.motion.x;
+
+                positionZozor.y = event.motion.y;
+
+                break;
+
+        }
+
+
+        // On efface et on blitte à nouveau toutes les surfaces aux éventuels nouveaux emplacements
+
+        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 255, 0));
+
+        // Zozor
+
+        SDL_BlitSurface(zozor, NULL, ecran, &positionZozor);
+
+        // Les clotures
+
+        SDL_BlitSurface(clotureVerticale, NULL, ecran, &positionClotureGH);
+
+        SDL_BlitSurface(clotureVerticale, NULL, ecran, &positionClotureD);
+
+        SDL_BlitSurface(clotureHorizontale, NULL, ecran, &positionClotureGH);
+
+        SDL_BlitSurface(clotureHorizontale, NULL, ecran, &positionClotureB);
+
+
+        SDL_Flip(ecran);
+
+    }
+
+
+
+    /*
+
+    6. Pour terminer
+
+    */
+
+    SDL_Flip(ecran);
+
+    SDL_FreeSurface(zozor);
+
+    SDL_FreeSurface(clotureVerticale);
+
+    SDL_FreeSurface(clotureHorizontale);
+
+    SDL_Quit();
+
+
+    return EXIT_SUCCESS;
+
 }
-
-/**
-* Loads a BMP image into a texture on the rendering device
-* @param file The BMP image file to load
-* @param ren The renderer to load the texture onto
-* @return the loaded texture, or nullptr if something went wrong.
-*/
-SDL_Texture* loadTexture(const std::string &file, SDL_Renderer *ren){
-	//Initialize to nullptr to avoid dangling pointer issues
-	SDL_Texture *texture = nullptr;
-	//Load the image
-	SDL_Surface *loadedImage = SDL_LoadBMP(file.c_str());
-	//If the loading went ok, convert to texture and return the texture
-	if (loadedImage != nullptr){
-		texture = SDL_CreateTextureFromSurface(ren, loadedImage);
-		SDL_FreeSurface(loadedImage);
-		//Make sure converting went ok too
-		if (texture == nullptr){
-			logSDLError(std::cout, "CreateTextureFromSurface");
-		}
-	}
-	else {
-		logSDLError(std::cout, "LoadBMP");
-	}
-	return texture;
-}
-
-/**
-* Draw an SDL_Texture to an SDL_Renderer at position x, y, preserving
-* the texture's width and height
-* @param tex The source texture we want to draw
-* @param ren The renderer we want to draw to
-* @param x The x coordinate to draw to
-* @param y The y coordinate to draw to
-*/
-void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
-	//Setup the destination rectangle to be at the position we want
-	SDL_Rect dst;
-	dst.x = x;
-	dst.y = y;
-	//Query the texture to get its width and height to use
-	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
-	SDL_RenderCopy(ren, tex, NULL, &dst);
-}
-
-if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
-	logSDLError(std::cout, "SDL_Init");
-	return 1;
-}
-
-SDL_Window *window = SDL_CreateWindow("Lesson 2", 100, 100, SCREEN_WIDTH,
-	SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-if (window == nullptr){
-	logSDLError(std::cout, "CreateWindow");
-	SDL_Quit();
-	return 1;
-}
-SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
-	SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-if (renderer == nullptr){
-	logSDLError(std::cout, "CreateRenderer");
-	cleanup(window);
-	SDL_Quit();
-	return 1;
-}
-
-const std::string resPath = getResourcePath("Lesson2");
-SDL_Texture *background = loadTexture(resPath + "background.bmp", renderer);
-SDL_Texture *image = loadTexture(resPath + "image.bmp", renderer);
-if (background == nullptr || image == nullptr){
-	cleanup(background, image, render, window);
-	SDL_Quit();
-	return 1;
-}
-
-SDL_RenderClear(renderer);
-
-int bW, bH;
-SDL_QueryTexture(background, NULL, NULL, &bW, &bH);
-renderTexture(background, renderer, 0, 0);
-renderTexture(background, renderer, bW, 0);
-renderTexture(background, renderer, 0, bH);
-renderTexture(background, renderer, bW, bH);
-int iW, iH;
-SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
-int x = SCREEN_WIDTH / 2 - iW / 2;
-int y = SCREEN_HEIGHT / 2 - iH / 2;
-renderTexture(image, renderer, x, y);
-
-SDL_RenderPresent(renderer);
-SDL_Delay(1000);
-
-cleanup(background, image, render, window);
-SDL_Quit();
-
-
-
 
