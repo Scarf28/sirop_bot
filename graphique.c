@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
     ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Pauvre Zozor.", NULL);
     //On colore le fond en vert (imitation herbe... :lol: )
-    //SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 11,133,14));
-    SDL_FillRect(ecran, NULL, "Herbe.bmp");
+    SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 11,133,14));
+    //SDL_FillRect(ecran, NULL, "Herbe.bmp");
 
 
 
