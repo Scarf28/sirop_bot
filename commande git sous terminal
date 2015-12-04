@@ -19,3 +19,9 @@ recuperer le projet en local
 
 git add nomdufichierajouter
 ajouter un fichier
+
+permet de configurer les proxy à l'upmc
+export http_proxy=http://@proxyweb.upmc.fr:3128
+export https_proxy = $http_proxy
+
+
