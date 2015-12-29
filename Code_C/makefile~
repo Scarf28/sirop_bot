@@ -3,24 +3,24 @@
 # options de compilation
 CC = gcc
 CCFLAGS = -Wall
-LIBSDIR = #-L/usr/lib/x86_x64-linux-gnu
-LIBS = -lm
+LIBSDIR = #-L/usr/lib/x86_x64-linux-gnu 
+LIBS = -lm 
 
 
 
 # fichiers du projet
-SRC = blackjack.c carte.c partie.c
+SRC = main.c graphique.c
 OBJ = $(SRC:.c=.o) 
-EXEC = black.out
+EXEC =simu.out
 
 
 # règle initiale
 all: $(EXEC)
 
 # dépendance des .h
-blackjack.o : carte.h partie.h
-carte.o : carte.h 
-partie.o : partie.h carte.h
+#blackjack.o : robot_api.h
+graphique.o : robot_api.h
+
 
 # règles de compilation
 %.o: %.c

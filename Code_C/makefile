@@ -3,13 +3,12 @@
 # options de compilation
 CC = gcc
 CCFLAGS = -Wall
-LIBSDIR = #-L/usr/lib/x86_x64-linux-gnu
-LIBS = -lm
-
+LIBSDIR = #-L/usr/lib/x86_x64-linux-gnu 
+LIBS = -lm `sdl-config --cflags --libs` 
 
 
 # fichiers du projet
-SRC = main.c
+SRC = main.c graphique.c
 OBJ = $(SRC:.c=.o) 
 EXEC =simu.out
 
@@ -19,6 +18,8 @@ all: $(EXEC)
 
 # dépendance des .h
 #blackjack.o : robot_api.h
+graphique.o : robot_api.h
+
 
 # règles de compilation
 %.o: %.c

@@ -24,14 +24,13 @@ typedef struct {
  	float x;	//position x en metre du centre du robot 
  	float y;	//position y en metre du cnetre du robot 
  	float teta;	//angle en radian (entre 0 et 2pi)
-	int existe; //0 = pas de robot; 1 = robot présent
-	int nb_missile;	//Nb de missiles tirés
-
-
-/******uniqument pour la simu   choix a faire *********************/
+	
+/******uniqument pour la simu choix a faire *********************/
 	float speed; //vitesse du robot
 	int id_player; //identifiant du robot connecté
 	int life_point;	//Vie restante en pourcent 
+	int nb_missile;	//Nb de missiles tirés
+	int existe; //0 = pas de robot; 1 = robot présent
 
  }s_robot; 
  
@@ -40,7 +39,7 @@ typedef struct {
      float x;    //position x en metre en tête du missile 
      float y;    //position y en metre en tête du missile 
      float teta; //angle relatif du missile pas rapport à l'axe x en radian
-     int existe; //0 = pas de missile; 1 = missile présent 
+     int existe; //0 = pas de missile; 1 = missile présent
 
 /******uniqument pour la simu   choix a faire *********************/
 	int id_shooter; //permet de savoir qui tue qui
