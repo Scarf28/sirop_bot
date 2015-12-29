@@ -76,7 +76,7 @@ int graphique(int largeur_ecran, int hauteur_ecran, int larg_score, int posix,in
 	// On détermine la position du terrain
 	positionTerrain.x = marge;
 	positionTerrain.y = marge;
-		SDL_BlitSurface(terrain, NULL, ecran, &positionTerrain);
+//		SDL_BlitSurface(terrain, NULL, ecran, &positionTerrain);
 
 
 	/*

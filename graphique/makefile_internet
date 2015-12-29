@@ -1,0 +1,34 @@
+# Création de l'exécutable 'Fractales'
+
+all: create main.o julia.o mandelbrot.o
+	gcc ./bin/*.o -o Fractales
+	# Ligne à ajouter selon le photon:
+	gcc ./bin/*.o -o Fractales `sdl-config -libs`
+
+
+ 
+# Création du dossier bin (à condition que ce dernier n'existe pas déjà)
+
+create:
+	mkdir -p bin
+
+
+############ Compilation de l'ensemble des fichiers ############
+main.o: ./src/main.c
+	gcc -c ./src/main.c -o ./bin/main.o
+
+julia.o: ./src/julia.c
+	gcc -c ./src/julia.c  -o ./bin/julia.o `sdl-config -libs --cflags`
+
+mandelbrot.o: ./src/mandelbrot.c
+	gcc -c ./src/mandelbrot.c -o ./bin/mandelbrot.o `sdl-config -libs --cflags`
+
+# Suppression des fichiers temporaires
+clean:
+	rm -rf ./bin/*.o
+
+# Suppression de tous les fichiers, sauf les sources,
+# en vue d'une reconstruction complète
+very-clean: clean
+	rm -rf bin
+	rm -rf Fractales
